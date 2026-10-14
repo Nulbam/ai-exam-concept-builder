@@ -112,7 +112,7 @@ def call_gemini_with_fallback(client, contents, config=None):
     primary_model = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite").strip()
     # 폴백 후보 목록
     fallback_candidates = [primary_model]
-    for alt in ["gemini-3.5-flash-lite", "gemini-3.5-flash"]:
+    for alt in ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite"]:
         if alt not in fallback_candidates:
             fallback_candidates.append(alt)
 
