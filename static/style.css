@@ -766,14 +766,14 @@ body {
 @media print {
     @page {
         size: A4;
-        margin: 15mm 20mm 15mm 20mm;
+        margin: 8mm 10mm 8mm 10mm; /* 상하좌우 여백을 컴팩트하게 대폭 축소 */
     }
 
     body {
         background-color: #ffffff !important;
-        color: #000000 !important;
-        font-size: 11pt !important;
-        line-height: 1.6 !important;
+        color: #0f172a !important;
+        font-size: 9.8pt !important;
+        line-height: 1.45 !important;
         padding: 0 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -801,79 +801,128 @@ body {
         border: none !important;
         box-shadow: none !important;
         padding: 0 !important;
+        margin: 0 !important;
     }
 
     /* 요약 섹션만 표시 */
     .summary-section {
         display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
     .print-only-header {
         display: block !important;
-        margin-bottom: 20px;
+        margin-bottom: 8px !important;
+        border-bottom: 1.5pt solid #1e293b;
+        padding-bottom: 4px;
     }
 
     .print-only-header h2 {
-        font-size: 18pt !important;
+        font-size: 13pt !important;
         font-weight: 700;
-        margin-bottom: 6px;
+        margin-bottom: 2px !important;
     }
 
     .print-only-header p {
-        font-size: 9pt;
-        color: #555555;
+        font-size: 8pt;
+        color: #64748b;
+        margin: 0 !important;
     }
 
+    .print-only-header hr {
+        display: none !important;
+    }
+
+    /* 컴팩트 마크다운 본문 여백 */
     .markdown-content h1 {
-        font-size: 15pt !important;
-        border-bottom: 1.5pt solid #333333 !important;
-        margin-top: 24pt !important;
+        font-size: 12.5pt !important;
+        border-bottom: 1pt solid #cbd5e1 !important;
+        margin-top: 12pt !important;
+        margin-bottom: 4pt !important;
+        padding-bottom: 2pt !important;
         page-break-after: avoid;
     }
 
     .markdown-content h2 {
-        font-size: 13pt !important;
-        background-color: #f1f5f9 !important;
-        border-left: 4pt solid #2563eb !important;
-        padding: 4pt 8pt !important;
-        margin-top: 16pt !important;
+        font-size: 10.8pt !important;
+        background-color: #eff6ff !important;
+        border-left: 3pt solid #2563eb !important;
+        padding: 2.5pt 6pt !important;
+        margin-top: 9pt !important;
+        margin-bottom: 3pt !important;
         page-break-after: avoid;
     }
 
-    .markdown-content p, 
-    .markdown-content li {
-        orphans: 3;
-        widows: 3;
+    .markdown-content h3 {
+        font-size: 10pt !important;
+        margin-top: 6pt !important;
+        margin-bottom: 2pt !important;
+        page-break-after: avoid;
     }
 
-    .markdown-content blockquote {
-        border-left: 3pt solid #888888 !important;
-        background-color: #f9f9f9 !important;
+    .markdown-content p {
+        margin: 2pt 0 !important;
+    }
+
+    .markdown-content ul, 
+    .markdown-content ol {
+        padding-left: 16px !important;
+        margin: 3pt 0 !important;
+    }
+
+    .markdown-content li {
+        margin-bottom: 1.5pt !important;
+    }
+
+    /* 콜아웃 박스 여백 압축 */
+    .teacher-note-box {
+        padding: 5pt 9pt !important;
+        margin: 5pt 0 !important;
+        font-size: 9pt !important;
+        border-width: 1.5pt !important;
         page-break-inside: avoid;
     }
 
+    .intro-guide-box {
+        padding: 3pt 7pt !important;
+        margin: 3pt 0 6pt !important;
+        font-size: 8.5pt !important;
+        page-break-inside: avoid;
+    }
+
+    .markdown-content blockquote {
+        border-left: 2.5pt solid #888888 !important;
+        background-color: #f8fafc !important;
+        padding: 3pt 7pt !important;
+        margin: 3pt 0 !important;
+        page-break-inside: avoid;
+    }
+
+    /* 테이블 여백 압축 */
     .table-responsive {
         overflow-x: visible !important;
-        margin: 12pt 0 !important;
+        margin: 5pt 0 !important;
         border: none !important;
     }
 
     .concept-table {
         width: 100% !important;
         border-collapse: collapse !important;
-        font-size: 9.5pt !important;
+        font-size: 8.5pt !important;
         page-break-inside: avoid;
     }
 
     .concept-table th {
         background-color: #f1f5f9 !important;
-        color: #000000 !important;
-        border: 1pt solid #475569 !important;
-        padding: 5pt 8pt !important;
+        color: #0f172a !important;
+        border: 1pt solid #94a3b8 !important;
+        padding: 3pt 5pt !important;
     }
 
     .concept-table td {
         border: 1pt solid #cbd5e1 !important;
-        padding: 5pt 8pt !important;
+        padding: 3pt 5pt !important;
+        line-height: 1.35 !important;
     }
 }
