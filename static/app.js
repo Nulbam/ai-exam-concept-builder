@@ -86,6 +86,14 @@ document.addEventListener("DOMContentLoaded", () => {
             elements.statusText.textContent = "서버 연결 불가";
             showToast("백엔드 서버와 통신할 수 없습니다.", "error");
         }
+
+        // Vercel 환경일 때 최대 용량 텍스트 자동 갱신
+        if (window.location.hostname.includes("vercel.app")) {
+            const limitEl = document.getElementById("dropLimitText");
+            if (limitEl) {
+                limitEl.textContent = "Vercel 무료 호스팅 1회 한도: 최대 4.5MB (.pdf 지원)";
+            }
+        }
     }
 
     // 2. 파일 선택 및 드래그 앤 드롭
@@ -114,6 +122,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // 안전한 JSON 파싱 및 HTTP 상태코드별 친절한 에러 핸들러
+    async function parseResponseJson(res) {
+        if (res.status === 413) {
+            throw new Error("파일 용량이 너무 큽니다 (Request Entity Too Large). Vercel 호스팅 환경에서는 파일당 최대 4.5MB까지 업로드 가능합니다. (로컬 PC 서버에서는 20MB 지원)");
+        }
+        if (res.status === 504) {
+            throw new Error("서버 처리 시간(Timeout)이 초과되었습니다. 대상 페이지 범위를 5~10페이지 내외로 좁혀서 다시 시도해 주세요.");
+        }
+        const text = await res.text();
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            console.error("[ERROR] JSON 파싱 불가 원문 응답:", text);
+            throw new Error(text || "서버에서 올바른 응답을 받지 못했습니다.");
+        }
+    }
+
     function handleFileSelect(file) {
         if (!file.name.toLowerCase().endsWith(".pdf")) {
             console.error("[ERROR] 지원하지 않는 파일 형식:", file.name);
@@ -121,8 +146,22 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+        const sizeMb = parseFloat((file.size / (1024 * 1024)).toFixed(2));
         console.log(`[UPLOAD] 파일 선택: ${file.name} (${sizeMb}MB)`);
+
+        // Vercel 무료 호스팅 환경(도메인 vercel.app)은 1회 요청 크기가 4.5MB로 제한됨
+        const isVercel = window.location.hostname.includes("vercel.app");
+        const maxLimitMb = isVercel ? 4.5 : 20.0;
+
+        if (sizeMb > maxLimitMb) {
+            console.error(`[ERROR] 파일 크기 제한 초과 (${sizeMb}MB > ${maxLimitMb}MB)`);
+            if (isVercel) {
+                showToast(`선택하신 PDF(${sizeMb}MB)가 Vercel 무료 호스팅 1회 업로드 한도(4.5MB)를 초과했습니다. PDF 페이지를 분할하거나 압축하여 업로드해 주세요. (로컬 PC에서는 20MB까지 처리 가능합니다)`, "error");
+            } else {
+                showToast(`파일 용량이 너무 큽니다 (${sizeMb}MB). 최대 ${maxLimitMb}MB 이하의 파일만 업로드할 수 있습니다.`, "error");
+            }
+            return;
+        }
 
         state.selectedFile = file;
         inspectPdf(file);
@@ -142,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: formData
             });
 
-            const result = await res.json();
+            const result = await parseResponseJson(res);
             if (!res.ok || result.status !== "success") {
                 throw new Error(result.message || "PDF 진단에 실패했습니다.");
             }
@@ -209,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: formData
             });
 
-            const result = await res.json();
+            const result = await parseResponseJson(res);
             if (!res.ok || result.status !== "success") {
                 throw new Error(result.message || "요약 생성에 실패했습니다.");
             }
@@ -261,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ summary: state.summaryText })
             });
 
-            const result = await res.json();
+            const result = await parseResponseJson(res);
             if (!res.ok || result.status !== "success") {
                 throw new Error(result.message || "퀴즈 생성에 실패했습니다.");
             }
@@ -407,7 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
             });
 
-            const result = await res.json();
+            const result = await parseResponseJson(res);
             if (!res.ok || result.status !== "success") {
                 throw new Error(result.message || "답변을 가져오지 못했습니다.");
             }
